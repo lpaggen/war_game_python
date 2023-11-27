@@ -101,9 +101,6 @@ class Game(Deck):
             elif startround == "n":
                 print("Exiting game..")
                 break
-            else:
-                print("Please only enter either y or n")
-                self.round()
 
             if proceed is True:
                 print(f"Player 1 card: {self.p1_deck[0]}\nPlayer 2 card: {self.p2_deck[0]}")
@@ -163,5 +160,5 @@ def wargame():
     deck = Game()
     deck.round()
     
-if __name__ == "main.py":
+if __name__ == "__main__":
     wargame()
