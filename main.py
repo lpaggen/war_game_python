@@ -99,15 +99,11 @@ class Game(Deck):
             if startround == "y":
                 proceed = True
             elif startround == "n":
-                proceed = False
+                print("Exiting game..")
+                break
             else:
                 print("Please only enter either y or n")
                 self.round()
-            
-            # proceed = True --> round starts
-            if proceed is False:
-                print("Exiting game, losers")
-                break
 
             if proceed is True:
                 print(f"Player 1 card: {self.p1_deck[0]}\nPlayer 2 card: {self.p2_deck[0]}")
@@ -142,7 +138,7 @@ class Game(Deck):
                 elif (self.p1_deck[i] == self.p2_deck[j]) and (len(self.p1_deck) or len(self.p2_deck) > 3):
                     self.index_tracker["i"] = 2 # now i and j are mapped to 2, as we use the 3rd card for both decks here
                     self.index_tracker["j"] = 2 # this is only temporary, i and j are set back to 0 right after
-                    self.round() # should now check for conditions using i and j as index
+                    self.round() # should now check for conditions using i and j as index (recursive)
                     if roundwin == "p1":
                         self.p1_deck.append(self.p1_deck[1])
                         self.p1_deck.append(self.p1_deck[2])
@@ -167,3 +163,6 @@ def wargame():
     """
     deck = Game()
     deck.round()
+    
+if __name__ == "main.py":
+    wargame()
