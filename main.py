@@ -20,17 +20,18 @@ class Deck(object):
         self.p1_deck = []
         self.p2_deck = []
         self.used_cards = []
+        self.roundcount = 1 # incremental
         self.build()
         self.shuffle()
         self.deal()
-    
+
     def build(self):
         """builds the deck of the game"""
         for i in self.suit:
             for j in self.rank_val[2:]:
                 card = Card(j, i)
                 self.deck.append(card)
-                
+
     def shuffle(self):
         """shuffles the deck of the game"""
         shuffle(self.deck)
@@ -39,7 +40,7 @@ class Deck(object):
     def show(self):
         """displays the whole deck"""
         print(self.deck)
-        
+
     def deal(self):
         """deals cards to both players"""
         self.p1_deck = self.deck[:26]
@@ -76,7 +77,7 @@ class Game(Deck):
     """
     def __init__(self):
         super().__init__() # init attributes of parent class
-        
+
     def players(self):
         """
         Asks for player names
@@ -90,9 +91,8 @@ class Game(Deck):
         Starts a new round for both players
         """
         while len(self.p1_deck) or len(self.p2_deck) > 0:
-            roundcount = 1 # incremental
             try:
-                startround = str(input(f"Start round {roundcount} ? (y/n)"))
+                startround = str(input(f"Start round {self.roundcount} ? (y/n)"))
             except(ValueError):
                 print("Please only input either y or n")
                 self.round()
@@ -107,11 +107,10 @@ class Game(Deck):
 
             if proceed is True:
                 print(f"Player 1 card: {self.p1_deck[0]}\nPlayer 2 card: {self.p2_deck[0]}")
-                
+
                 # manipulate the index tracker dictionary
                 i, j = self.index_tracker.values() # just taking the values and assigning to i, j
-                print(f"i = {i}\nj = {j}")
-                
+
                 # 3 conditions to check, <, >, ==
                 if self.p1_deck[i] > self.p2_deck[j]: # using i and j, modular
                     roundwin = "p1"
@@ -123,7 +122,7 @@ class Game(Deck):
                     self.p2_deck.pop(0)
                     print(f"p1 has {len(self.p1_deck)} cards") # debug
                     print(f"p2 has {len(self.p2_deck)} cards") # debug
-                    
+
                 elif self.p1_deck[i] < self.p2_deck[j]:
                     roundwin = "p2"
                     print(self.p1_deck[0] < self.p2_deck[0])
@@ -134,7 +133,7 @@ class Game(Deck):
                     self.p2_deck.pop(0)
                     print(f"p1 has {len(self.p1_deck)} cards") # debug
                     print(f"p2 has {len(self.p2_deck)} cards") # debug
-                    
+
                 elif (self.p1_deck[i] == self.p2_deck[j]) and (len(self.p1_deck) or len(self.p2_deck) > 3):
                     self.index_tracker["i"] = 2 # now i and j are mapped to 2, as we use the 3rd card for both decks here
                     self.index_tracker["j"] = 2 # this is only temporary, i and j are set back to 0 right after
@@ -155,7 +154,7 @@ class Game(Deck):
                         self.p1_deck.pop(2)
                 self.index_tracker["i"] = 0 # reset both i and j to 0 for further rounds
                 self.index_tracker["j"] = 0 # should work just fine
-                    
+                self.roundcount += 1
 
 def wargame():
     """
