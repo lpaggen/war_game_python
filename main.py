@@ -8,6 +8,9 @@ from random import shuffle
 import sys
 import time
 
+# a few global lists to gather information about the games
+rounds_to_completion = []
+
 # set up class for deck
 class Deck(object):
     """
@@ -97,7 +100,7 @@ class Game(Deck):
             else:
                 self.autoplay = False
 
-        while len(self.p1_deck) > 0 or len(self.p2_deck) > 0:
+        while len(self.p1_deck) > 0 and len(self.p2_deck) > 0:
             if self.autoplay:
                 proceed = True
                 self.startround = True
@@ -115,70 +118,77 @@ class Game(Deck):
             # manipulate the index tracker dictionary
             i, j = self.index_tracker.values() # just takes the values and assigning to i, j
             print(f"Player 1 card: {self.p1_deck[i]}\nPlayer 2 card: {self.p2_deck[j]}")
+            print(self.index_tracker)
 
             # 3 conditions to check, <, >, ==
             # using i and j, modular
-            if (self.p1_deck[i] > self.p2_deck[j]) and (len(self.p1_deck) > 0 and len(self.p2_deck) > 0): 
+            if (self.p1_deck[i] > self.p2_deck[j]) and (len(self.p1_deck) >= 1 and len(self.p2_deck) >= 1):
                 roundwin = "p1"
                 print("\tPlayer 1 wins this round")
                 cards_to_stack = [self.p1_deck[0], self.p2_deck[0]]
                 shuffle(cards_to_stack)
                 self.p1_deck.extend(cards_to_stack)
-                self.p1_deck.pop(0) # make sure to remove top card from deck
-                self.p2_deck.pop(0)
-                if self.is_war:
-                    cards_to_stack = [self.p1_deck[1], self.p1_deck[2],
-                                      self.p2_deck[1], self.p2_deck[2]]
+                if len(self.p1_deck) > 0 and len(self.p2_deck) > 0:
+                    self.p1_deck.pop(0) # make sure to remove top card from deck
+                    self.p2_deck.pop(0)
+                if self.is_war and len(self.p1_deck) > i and len(self.p2_deck) > j:
+                    cards_to_stack = [self.p1_deck[0], self.p1_deck[1],
+                                      self.p2_deck[0], self.p2_deck[1]]
                     shuffle(cards_to_stack)
                     self.p1_deck.extend(cards_to_stack)
+                    self.p1_deck.pop(0)
                     self.p1_deck.pop(1)
-                    self.p1_deck.pop(2)
+                    self.p2_deck.pop(0)
                     self.p2_deck.pop(1)
-                    self.p2_deck.pop(2)
                     self.is_war = False
                 print(f"\t\tp1 has {len(self.p1_deck)} cards") # debug
                 print(f"\t\tp2 has {len(self.p2_deck)} cards") # debug
 
-            elif (self.p1_deck[i] < self.p2_deck[j]) and (len(self.p1_deck) > 0 and len(self.p2_deck) > 0):
+            elif (self.p1_deck[i] < self.p2_deck[j]) and (len(self.p1_deck) >= 1 and len(self.p2_deck) >= 1):
                 roundwin = "p2"
                 print("\tPlayer 2 wins this round")
                 cards_to_stack = [self.p1_deck[0], self.p2_deck[0]]
                 shuffle(cards_to_stack)
                 self.p2_deck.extend(cards_to_stack)
-                self.p1_deck.pop(0) # make sure to remove top card from deck
-                self.p2_deck.pop(0)
-                if self.is_war:
-                    cards_to_stack = [self.p1_deck[1], self.p1_deck[2],
-                                      self.p2_deck[1], self.p2_deck[2]]
+                if len(self.p1_deck) > 0 and len(self.p2_deck) > 0:
+                    self.p1_deck.pop(0) # make sure to remove top card from deck
+                    self.p2_deck.pop(0)
+                if self.is_war and len(self.p1_deck) > i and len(self.p2_deck) > j:
+                    cards_to_stack = [self.p1_deck[0], self.p1_deck[1],
+                                      self.p2_deck[0], self.p2_deck[1]]
                     shuffle(cards_to_stack)
                     self.p2_deck.extend(cards_to_stack)
+                    self.p2_deck.pop(0)
                     self.p2_deck.pop(1)
-                    self.p2_deck.pop(2)
+                    self.p1_deck.pop(0)
                     self.p1_deck.pop(1)
-                    self.p1_deck.pop(2)
                     self.is_war = False
                 print(f"\t\tp1 has {len(self.p1_deck)} cards") # debug
                 print(f"\t\tp2 has {len(self.p2_deck)} cards") # debug
 
-            elif (self.p1_deck[i] == self.p2_deck[j]) and (len(self.p1_deck) > 3 and len(self.p2_deck) > 3):
-                self.index_tracker["i"] = 2 # now i and j are mapped to 2, as we use the 3rd card for both decks here
-                self.index_tracker["j"] = 2 # this is only temporary, i and j are set back to 0 right after
+            elif (self.p1_deck[i] == self.p2_deck[j]) and (len(self.p1_deck) >= 3 and len(self.p2_deck) >= 3): # and (len(self.p1_deck) > i and len(self.p2_deck) > j):
+                self.index_tracker["i"] += 2
+                self.index_tracker["j"] += 2
                 self.is_war = True
-                print("\t**** WAR ***")
-                self.roundcount +=1
+                print("\t**** WAR ****")
                 self.round() # should now check for conditions using i and j as index (recursive)
-
-            else: # should see that player decks are depleted
+                
+            else:
+                rounds_to_completion.append(self.roundcount)
                 print("Game is over!")
-                exit()
+                break
 
             self.index_tracker["i"] = 0 # reset both i and j to 0 for further rounds
             self.index_tracker["j"] = 0 # should work just fine
             self.roundcount += 1
             if self.autoplay:
                 time.sleep(0.2)
-
+                
+        print("Game is over")
+        sys.exit()
+        
 def wargame():
+    """Starts a game of war in your terminal"""
     deck = Game()
     deck.round()
 
