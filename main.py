@@ -122,7 +122,7 @@ class Game(Deck):
 
             # 3 conditions to check, <, >, ==
             # using i and j, modular
-            if (self.p1_deck[i] > self.p2_deck[j]) and (len(self.p1_deck) >= 1 and len(self.p2_deck) >= 1):
+            if (self.p1_deck[i] > self.p2_deck[j]) and (len(self.p1_deck) >= i and len(self.p2_deck) >= j):
                 roundwin = "p1"
                 print("\tPlayer 1 wins this round")
                 cards_to_stack = [self.p1_deck[0], self.p2_deck[0]]
@@ -144,7 +144,7 @@ class Game(Deck):
                 print(f"\t\tp1 has {len(self.p1_deck)} cards") # debug
                 print(f"\t\tp2 has {len(self.p2_deck)} cards") # debug
 
-            elif (self.p1_deck[i] < self.p2_deck[j]) and (len(self.p1_deck) >= 1 and len(self.p2_deck) >= 1):
+            elif (self.p1_deck[i] < self.p2_deck[j]) and (len(self.p1_deck) >= i and len(self.p2_deck) >= j):
                 roundwin = "p2"
                 print("\tPlayer 2 wins this round")
                 cards_to_stack = [self.p1_deck[0], self.p2_deck[0]]
@@ -172,7 +172,7 @@ class Game(Deck):
                 self.is_war = True
                 print("\t**** WAR ****")
                 self.round() # should now check for conditions using i and j as index (recursive)
-                
+
             else:
                 rounds_to_completion.append(self.roundcount)
                 print("Game is over!")
@@ -183,7 +183,7 @@ class Game(Deck):
             self.roundcount += 1
             if self.autoplay:
                 time.sleep(0.2)
-                
+
         print("Game is over")
         sys.exit()
         
