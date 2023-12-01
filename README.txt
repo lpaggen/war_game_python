@@ -6,4 +6,4 @@ KNOWN BUGS:
  
 autoplay does not work properly yet due to issues with my recursive call of round()
 
-whenever the same cards appear TWICE in a row, the game will enter a loop which will cause the program to crash due to recursion being used too many times
+some issues in logic cause the game to sometimes crash due to non existent indexes in lists
