@@ -9,7 +9,7 @@ import sys
 import time
 
 # a few global lists to gather information about the games
-rounds_to_completion = []
+stats = {"player" : [], "rounds" : []} # dictionary of lists, keeps statistics about the games
 
 # set up class for deck
 class Deck(object):
@@ -117,8 +117,9 @@ class Game(Deck):
             # user wants to play, let's go (proceed is always True here)
             # manipulate the index tracker dictionary
             i, j = self.index_tracker.values() # just takes the values and assigning to i, j
-            print(f"Player 1 card: {self.p1_deck[i]}\nPlayer 2 card: {self.p2_deck[j]}")
-            print(self.index_tracker)
+            if len(self.p1_deck) > i and len(self.p2_deck) > j:
+                print(f"Player 1 card: {self.p1_deck[i]}\nPlayer 2 card: {self.p2_deck[j]}")
+                print(self.index_tracker)
 
             # 3 conditions to check, <, >, ==
             # using i and j, modular
@@ -144,7 +145,7 @@ class Game(Deck):
                 print(f"\t\tp1 has {len(self.p1_deck)} cards") # debug
                 print(f"\t\tp2 has {len(self.p2_deck)} cards") # debug
 
-            elif (self.p1_deck[i] < self.p2_deck[j]) and (len(self.p1_deck) >= i and len(self.p2_deck) >= j):
+            elif (self.p1_deck[i] < self.p2_deck[j]) and (len(self.p1_deck) > i and len(self.p2_deck) > j):
                 roundwin = "p2"
                 print("\tPlayer 2 wins this round")
                 cards_to_stack = [self.p1_deck[0], self.p2_deck[0]]
@@ -166,7 +167,7 @@ class Game(Deck):
                 print(f"\t\tp1 has {len(self.p1_deck)} cards") # debug
                 print(f"\t\tp2 has {len(self.p2_deck)} cards") # debug
 
-            elif (self.p1_deck[i] == self.p2_deck[j]) and (len(self.p1_deck) >= 3 and len(self.p2_deck) >= 3): # and (len(self.p1_deck) > i and len(self.p2_deck) > j):
+            elif (self.p1_deck[i] == self.p2_deck[j]) and (len(self.p1_deck) > i and len(self.p2_deck) > j): # and (len(self.p1_deck) > i and len(self.p2_deck) > j):
                 self.index_tracker["i"] += 2
                 self.index_tracker["j"] += 2
                 self.is_war = True
@@ -174,8 +175,6 @@ class Game(Deck):
                 self.round() # should now check for conditions using i and j as index (recursive)
 
             else:
-                rounds_to_completion.append(self.roundcount)
-                print("Game is over!")
                 break
 
             self.index_tracker["i"] = 0 # reset both i and j to 0 for further rounds
@@ -183,9 +182,11 @@ class Game(Deck):
             self.roundcount += 1
             if self.autoplay:
                 time.sleep(0.2)
-
-        print("Game is over")
-        sys.exit()
+                
+        self.save_results()
+        
+    def save_results(self):
+        print("saving results")
         
 def wargame():
     """Starts a game of war in your terminal"""
