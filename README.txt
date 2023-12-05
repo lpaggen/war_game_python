@@ -2,8 +2,5 @@ Written by Leo Paggen
 
 Run the game using the "wargame()" function in your terminal
 
-KNOWN BUGS:
- 
-autoplay does not work properly yet due to issues with my recursive call of round()
-
-some issues in logic cause the game to sometimes crash due to non existent indexes in lists
+The wargame() function takes 2 parameters -> fast (bool) - Makes the game run faster. Default is False
+                                          -> metrics (bool) - Makes the game run 1000 times for statistical analysis. Default is False
